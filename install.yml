@@ -1,0 +1,24 @@
+# This file may be committed to your app code.
+version: 1.0
+# This should match the app - package name in your setup.py
+name: gw
+setup_path: setup_auto.py
+
+conda:
+  channels:
+    - opengeostat
+    - conda-forge
+
+  dependencies:
+    - pykrige
+    - ujson
+    - numpy
+    - netCDF4
+    - cython
+    - pygslib
+
+pip:
+  - elevation
+
+post:
+  - ./load-thredds-data.sh
