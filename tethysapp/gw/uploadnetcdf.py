@@ -1,5 +1,5 @@
-from __future__ import division
-from __future__ import unicode_literals
+
+
 import os
 import json
 import netCDF4
@@ -52,7 +52,7 @@ def explode(coords):
     """Explode a GeoJSON geometry's coordinates object and yield coordinate tuples.
     As long as the input is conforming, the type of the geometry doesn't matter."""
     for e in coords:
-        if isinstance(e, (float, int, long)):
+        if isinstance(e, (float, int)):
             yield coords
             break
         else:
@@ -60,7 +60,7 @@ def explode(coords):
                 yield f
 
 def bbox(f):
-    x, y = zip(*list(explode(f['geometry']['coordinates'])))
+    x, y = list(zip(*list(explode(f['geometry']['coordinates']))))
     return round(np.min(x)-.05,1), round(np.min(y)-.05,1), round(np.max(x)+.05,1), round(np.max(y)+.05,1)
 
 def download_DEM(region,myaquifer):
@@ -103,7 +103,7 @@ def download_DEM(region,myaquifer):
     dem_path = name.replace(' ', '_') + '_DEM.tif'
     output = os.path.join(directory, dem_path)
     elevation.clip(bounds=bounds, output=output)
-    print "This step works. 90 m DEM downloaded for ", name
+    print("This step works. 90 m DEM downloaded for ", name)
 
 # The following functions are used to automatically fit a variogram to the input data
 def great_circle_distance(lon1, lat1, lon2, lat2):
@@ -269,8 +269,8 @@ def generate_variogram(X,y,variogram_function):
     res = least_squares(_variogram_residuals, x0, bounds=bnds, loss='soft_l1',
                         args=(lags, semivariance, variogram_function, weight))
     variogram_model_parameters = res.x
-    print "sill, range, nugget"
-    print variogram_model_parameters
+    print("sill, range, nugget")
+    print(variogram_model_parameters)
     return variogram_model_parameters
 
 def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_type,interpolation_options,start_date,end_date,interval,resolution, min_samples, min_ratio, time_tolerance, date_name, make_default, units):
@@ -413,7 +413,7 @@ def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_
             spots.append(myspots)
             lons.append(mylons)
             lats.append(mylats)
-            print len(myvalues)
+            print(len(myvalues))
         lons = np.array(lons)
         lats = np.array(lats)
         values = np.array(values)
@@ -611,7 +611,7 @@ def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_
             lons.append(mylons)
             lats.append(mylats)
             heights.append(myheights)
-            print len(myvalues)
+            print(len(myvalues))
         lons = np.array(lons)
         lats = np.array(lats)
         values = np.array(values)
@@ -628,7 +628,7 @@ def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_
             all_empty=False
     if all_empty==True:
         message= "There is not enough data to perform interpolation"
-        print message
+        print(message)
         return message
     coordinates = np.array(coordinates)
     variogram_function = spherical_variogram_model
@@ -643,7 +643,7 @@ def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_
             variogram_model_parameters.append(generate_variogram(X,y,variogram_function))
         else:
             variogram_model_parameters.append([0,0,0])
-    print variogram_model_parameters
+    print(variogram_model_parameters)
     aquiferlist = getaquiferlist(app_workspace, region)
     for i in aquiferlist:
         if i['Id'] == int(aquifer_number):
@@ -727,7 +727,7 @@ def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_
         dem=dem*3.28084 #use this to convert from meters to feet
     dem_grid = np.reshape(dem, (lonrange, latrange))
     dem_grid[dem_grid<=-99]=-9999
-    print dem_grid
+    print(dem_grid)
     outx = np.repeat(longrid, latrange)
     outy = np.tile(latgrid, lonrange)
     depth_grids = []
@@ -799,13 +799,13 @@ def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_
                 elev_grid=np.reshape(elev_array,(lonrange,latrange))
                 idw_elev_grid = np.reshape(elev_idwarray, (lonrange, latrange))
                 x = np.isnan(elev_grid)
-                print np.isnan(elev_grid).sum() / elev_grid.size * 100.0, " % idw in Elev Grid"
+                print(np.isnan(elev_grid).sum() / elev_grid.size * 100.0, " % idw in Elev Grid")
                 elev_grid[x] = idw_elev_grid[x]
 
             depth_grid = np.reshape(array, (lonrange, latrange))
             idw_grid=np.reshape(idwarray, (lonrange, latrange))
             x = np.isnan(depth_grid)
-            print np.isnan(depth_grid).sum() / depth_grid.size * 100.0, " % idw in Depth Grid"
+            print(np.isnan(depth_grid).sum() / depth_grid.size * 100.0, " % idw in Depth Grid")
             depth_grid[x] = idw_grid[x]
 
             if interpolation_type == "Kriging with External Drift" or interpolation_options=="elev":
@@ -816,7 +816,7 @@ def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_
                 elev_grid[elev_grid<=-9000]=-9999
             depth_grids.append(depth_grid)
             elev_grids.append(elev_grid)
-            print i
+            print(i)
         else:
             depth_grid=np.full((lonrange,latrange),-9999)
             elev_grid=depth_grid
@@ -936,7 +936,7 @@ def upload_netcdf(points,name,app_workspace,aquifer_number,region,interpolation_
                 timearray.append(datetime.datetime(monthyear, 7, 1).toordinal())
         else:
             monthyear = start_date + interval * i
-            print monthyear
+            print(monthyear)
             quadyear = monthyear * 4
             if quadyear % 4 == 0:
                 targetyear = int(monthyear)

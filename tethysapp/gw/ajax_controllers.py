@@ -1,6 +1,6 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
+
+
+
 from django.http import Http404, HttpResponse, JsonResponse
 import netCDF4
 import numpy as np
@@ -425,7 +425,7 @@ def divideaquifers(region,app_workspace,aquiferid):
                         well['TsTime'].append(array[j][0])
                         well['TsValue'].append(array[j][1])
                         oldtime = array[j][0]
-        print len(points['features'])
+        print(len(points['features']))
         points['aquifermin'] = aquifermin
     else:
         points=all_points
@@ -447,7 +447,7 @@ def divideaquifers(region,app_workspace,aquiferid):
 #This function takes a region and aquiferid number and writes a new JSON file with data for the specified aquifer.
 # This function divides the data from a CSV and JSON file combination.
 def subdivideaquifers(region,app_workspace,aquiferid):
-    print "into subdivide"
+    print("into subdivide")
     aquiferlist = getaquiferlist(app_workspace, region)
 
     wellfile = region+"/Wells1.json"
@@ -479,7 +479,7 @@ def subdivideaquifers(region,app_workspace,aquiferid):
         mycsv=region+'/Wells_Master.csv'
         the_csv=os.path.join(app_workspace.path,mycsv)
         aquifer_id_number = str(aquifer_id_number)
-        print "to csv reader"
+        print("to csv reader")
         with open(the_csv) as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
@@ -489,7 +489,7 @@ def subdivideaquifers(region,app_workspace,aquiferid):
                             timestep = ((str(row['FeatureID']).strip()), (row['TsTime']), (float(row['TsValue'])),
                                         (float(row['TsValue_normalized'])))
                             time_csv.append(timestep)
-        print "past csv reader"
+        print("past csv reader")
     else:
         with open(well_file, 'r') as f:
             wells_json = json.load(f)
@@ -500,7 +500,7 @@ def subdivideaquifers(region,app_workspace,aquiferid):
         for feature in wells_json['features']:
             points['features'].append(feature)
         points['features'].sort(key=lambda x: x['properties']['HydroID'])
-        print len(points['features'])
+        print(len(points['features']))
 
         time_csv = []
         mycsv = region+'/Wells_Master.csv'
@@ -512,7 +512,7 @@ def subdivideaquifers(region,app_workspace,aquiferid):
                     timestep = ((str(row['FeatureID']).strip()), (row['TsTime']), (float(row['TsValue'])),
                                 (float(row['TsValue_normalized'])))
                     time_csv.append(timestep)
-        print "made it past the_csv step"
+        print("made it past the_csv step")
     time_csv.sort(key=lambda x:x[0])
     number = 0
     aquifermin = 0.0
@@ -535,7 +535,7 @@ def subdivideaquifers(region,app_workspace,aquiferid):
         if number==max_number:
             number=0
             continue
-    print "made it past the time_csv combination step"
+    print("made it past the time_csv combination step")
 
 
 
@@ -572,7 +572,7 @@ def subdivideaquifers(region,app_workspace,aquiferid):
                     i['TsValue'].append(array[j][1])
                     i['TsValue_norm'].append(array[j][2])
                     oldtime=array[j][0]
-    print "made it past the sorter"
+    print("made it past the sorter")
     points['aquifermin']=aquifermin
 
 
@@ -692,7 +692,7 @@ def interp_wizard(app_workspace, aquiferid, region, interpolation_type, interpol
         for i in range(0, len(wells)):
             allwells += wells[i]
     points = json.loads(allwells)
-    print len(points['features'])
+    print(len(points['features']))
 
     returnmessage=''
     # Execute the following function to interpolate groundwater levels and create a netCDF File and upload it to the server
@@ -702,7 +702,7 @@ def interp_wizard(app_workspace, aquiferid, region, interpolation_type, interpol
                       interval, resolution, min_samples, min_ratio, time_tolerance, date_name, make_default, units)
 
     end = t.time()
-    print(end - start)
+    print((end - start))
 
     return points,returnmessage
 
@@ -740,6 +740,6 @@ def upload_to_hydroshare(request):
                 return_json['hs_domain'] = hs.hostname
 
     except Exception as e:
-        print e
+        print(e)
     finally:
         return JsonResponse(return_json)

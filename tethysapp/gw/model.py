@@ -104,7 +104,7 @@ def init_primary_db(engine, first_time):
         print("well_data committed to persistent store")
 
         for item in time_data:
-            print(item[0])
+            print((item[0]))
             if item[0]!='':
                 data=Timeseries(
                 FeatureID=item[0],

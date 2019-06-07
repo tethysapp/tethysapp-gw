@@ -4,10 +4,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test
 from tethys_sdk.gizmos import Button, SelectInput, RangeSlider, TextInput
 import pandas as pd
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import contextlib
 from osgeo import gdal
-from ajax_controllers import *
+from .ajax_controllers import *
 
 
 
@@ -145,7 +145,7 @@ def addregion_nwis(request):
             aquiferlist = getaquiferlist(app_workspace, region)
 
             well_file = os.path.join(app_workspace.path, region + '/Wells.json')
-            print "to divide aquifers"
+            print("to divide aquifers")
             for i in range(1, len(aquiferlist) + 1):
                 if os.path.exists(well_file):
                     divideaquifers(region, app_workspace, i)
@@ -350,12 +350,12 @@ def addregion(request):
 
             for i in range(1, len(aquiferlist) + 1):
                 if os.path.exists(well_file) and os.path.exists(times_file):
-                    print "made it to subdivide"
+                    print("made it to subdivide")
                     subdivideaquifers(region, app_workspace, i)
             success=True
 
         except Exception as e:
-            print e
+            print(e)
             success=False
 
         if success:
@@ -685,17 +685,17 @@ def pullnwis(state, app_workspace,region):
     }
     aquifermin = 0.0
     for mystate in states:
-        print mystate
+        print(mystate)
         todaysdate=datetime.datetime.today()
         urlyear=str(todaysdate.year)
         urlmonth=str(todaysdate.month)
-        print urlmonth,urlyear
+        print(urlmonth,urlyear)
         link = "https://waterservices.usgs.gov/nwis/gwlevels/?format=json&stateCd="+mystate+"&startDT=1850-01-01&endDT="+urlyear+"-"+urlmonth+"-28&parameterCd=72019&siteStatus=all"
-        with contextlib.closing(urllib.urlopen(link)) as f:
+        with contextlib.closing(urllib.request.urlopen(link)) as f:
         # f=urllib.open(link)
             myfile=f.read()
         myfile = json.loads(myfile)
-        print len(myfile['value']['timeSeries'])
+        print(len(myfile['value']['timeSeries']))
 
 
         for i in range(0, len(myfile['value']['timeSeries'])):
