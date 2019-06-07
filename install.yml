@@ -19,6 +19,4 @@ conda:
 
 pip:
   - elevation
-
-post:
-  - ./load-thredds-data.sh
+ 

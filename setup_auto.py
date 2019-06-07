@@ -29,5 +29,5 @@ setup(
     namespace_packages=['tethysapp', 'tethysapp.' + app_package],
     include_package_data=True,
     zip_safe=False,
-    install_requires=dependencies
+    install_requires=[]
 )
