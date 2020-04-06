@@ -216,9 +216,9 @@ def add_aquifer(points, region, name, myaquifer, units):
                 print("aquifer committed to persistent store")
 
         else:
-            print("No AquiferID for", name)
+            print(("No AquiferID for", name))
     else:
-        print("No Aquifer named ", name)
+        print(("No Aquifer named ", name))
     session.close()
     return
 
@@ -249,7 +249,7 @@ def explode(coords):
     """Explode a GeoJSON geometry's coordinates object and yield coordinate tuples.
     As long as the input is conforming, the type of the geometry doesn't matter."""
     for e in coords:
-        if isinstance(e, (float, int, long)):
+        if isinstance(e, (float, int)):
             yield coords
             break
         else:
@@ -258,7 +258,7 @@ def explode(coords):
 
 
 def bbox(f):
-    x, y = zip(*list(explode(f['geometry']['coordinates'])))
+    x, y = list(zip(*list(explode(f['geometry']['coordinates']))))
     return round(np.min(x)-.05, 1), round(np.min(y)-.05, 1), round(np.max(x)+.05, 1), round(np.max(y)+.05, 1)
 
 
@@ -305,8 +305,8 @@ def download_DEM(region, myaquifer, units):
         answer = 0
         for f in range(len(aquiferShape['features'])):
             if aquiferShape['features'][f]['geometry'] != None:
-                x, y = zip(*list(explode(aquiferShape['features'][f]['geometry']['coordinates'])))
-                if len(x) > long:
+                x, y = list(zip(*list(explode(aquiferShape['features'][f]['geometry']['coordinates']))))
+                if len(x) > int:
                     long = len(x)
                     answer = f
         lonmin, latmin, lonmax, latmax = bbox(aquiferShape['features'][answer])
@@ -319,7 +319,7 @@ def download_DEM(region, myaquifer, units):
     else:
         output = os.path.join(directory, dem_path)
         elevation.clip(bounds=bounds, output=output, product='SRTM3')
-    print("90 m DEM successfully downloaded for ", name)
+    print(("90 m DEM successfully downloaded for ", name))
 
     if units:
         # Reproject DEM to 0.01 degree resolution using rasterio

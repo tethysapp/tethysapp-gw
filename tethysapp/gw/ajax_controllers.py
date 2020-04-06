@@ -430,7 +430,7 @@ def finish_addregion(request):
                 timearray = []
 
                 for i in range(0, 170):
-                    print "iteration", i
+                    print("iteration", i)
                     timearray.append(datetime.datetime(year, 1, 1).toordinal() - 1)
                     year += 1
                     time[i] = timearray[i]
@@ -714,7 +714,7 @@ def divideaquifers(region, app_workspace, aquiferid, units):
                             well['TsTime'].append(array[j][0])
                             well['TsValue'].append(array[j][1])
                             oldtime = array[j][0]
-            print(len(points['features']))
+            print((len(points['features'])))
             points['aquifermin'] = aquifermin
         else:
             points = all_points
@@ -791,7 +791,7 @@ def subdivideaquifers(region, app_workspace, aquiferid, units):
                 points = json.load(f)
 
             points['features'].sort(key=lambda x: x['properties']['HydroID'])
-            print(len(points['features']))
+            print((len(points['features'])))
 
             time_csv = []
             mycsv = region+'/Wells_Master.csv'
@@ -961,7 +961,7 @@ def interp_wizard(app_workspace, aquiferid, region, interpolation_type, interpol
 
     start = t.time()
 
-    print(len(points['features']))
+    print((len(points['features'])))
 
     returnmessage = ''
     # Execute the following function to interpolate groundwater levels and create a netCDF File and upload it to the server

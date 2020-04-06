@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from tethys_sdk.gizmos import Button, SelectInput, RangeSlider, TextInput, TableView, ToggleSwitch
 import pandas as pd
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from urllib.parse import urlencode
 import contextlib
 from .ajax_controllers import *
@@ -237,12 +237,12 @@ def addregion_nwis2(request, region):
         displayminor = True
         with open(minorfile) as f:
             minor_json = json.load(f)
-        minor_props = minor_json['features'][0]['properties'].viewkeys()
+        minor_props = minor_json['features'][0]['properties'].keys()
 
         count = min(3, len(minor_json['features']))
         minorrows = []
         for i in range(0, count):
-            row = minor_json['features'][i]['properties'].viewvalues()
+            row = minor_json['features'][i]['properties'].values()
             minorrows.append(row)
         minor_table_view_aq = TableView(column_names=(minor_props),
                                         rows=minorrows,
@@ -291,12 +291,12 @@ def addregion_nwis2(request, region):
                                             )
     with open(majorfile) as f:
         major_json = json.load(f)
-    major_props = major_json['features'][0]['properties'].viewkeys()
+    major_props = major_json['features'][0]['properties'].keys()
 
     count = min(3, len(major_json['features']))
     myrows = []
     for i in range(0, count):
-        row = major_json['features'][i]['properties'].viewvalues()
+        row = major_json['features'][i]['properties'].values()
         myrows.append(row)
 
     w_ids = []
@@ -595,12 +595,12 @@ def addregion2(request, region):
         displayminor = True
         with open(minorfile) as f:
             minor_json = json.load(f)
-        minor_props = minor_json['features'][0]['properties'].viewkeys()
+        minor_props = minor_json['features'][0]['properties'].keys()
 
         count = min(3, len(minor_json['features']))
         minorrows = []
         for i in range(0, count):
-            row = minor_json['features'][i]['properties'].viewvalues()
+            row = minor_json['features'][i]['properties'].values()
             minorrows.append(row)
         minor_table_view_aq = TableView(column_names=(minor_props),
                                         rows=minorrows,
@@ -649,12 +649,12 @@ def addregion2(request, region):
                                             )
     with open(majorfile) as f:
         major_json = json.load(f)
-    major_props = major_json['features'][0]['properties'].viewkeys()
+    major_props = major_json['features'][0]['properties'].keys()
 
     count = min(3, len(major_json['features']))
     myrows = []
     for i in range(0, count):
-        row = major_json['features'][i]['properties'].viewvalues()
+        row = major_json['features'][i]['properties'].values()
         myrows.append(row)
 
     toggle_region = SelectInput(display_text='Add Entire Region as an Aquifer?',
@@ -742,11 +742,11 @@ def addregion2(request, region):
         csvfile=False
         with open(well_file) as f:
             well_json = json.load(f)
-        well_props = well_json['features'][0]['properties'].viewkeys()
+        well_props = well_json['features'][0]['properties'].keys()
         count = min(3, len(well_json['features']))
         myrows = []
         for i in range(0, count):
-            row = well_json['features'][i]['properties'].viewvalues()
+            row = well_json['features'][i]['properties'].values()
             myrows.append(row)
 
     else:
@@ -761,13 +761,13 @@ def addregion2(request, region):
             print(rowcount)
             count=min(3,rowcount)
             myrows=[]
-            keys=rows[0].viewkeys()
+            keys=rows[0].keys()
             for i in range(0,count):
                 row=rows[i]
                 newrow=[]
                 for j in well_props:
                     newrow.append(row[j])
-                print("row:",newrow)
+                print(("row:",newrow))
                 myrows.append(newrow)
             print(myrows)
     w_ids = []
@@ -1295,14 +1295,14 @@ def pullnwis(state, app_workspace, region):
         todaysdate = datetime.datetime.today()
         urlyear = str(todaysdate.year)
         urlmonth = str(todaysdate.month)
-        print(urlmonth, urlyear)
+        print((urlmonth, urlyear))
         link = "https://waterservices.usgs.gov/nwis/gwlevels/?format=json&stateCd="+mystate + \
             "&startDT=1850-01-01&endDT="+urlyear+"-"+urlmonth+"-28&parameterCd=72019&siteStatus=all"
-        with contextlib.closing(urllib.urlopen(link)) as f:
+        with contextlib.closing(urllib.request.urlopen(link)) as f:
             # f=urllib.open(link)
             myfile = f.read()
         myfile = json.loads(myfile)
-        print(len(myfile['value']['timeSeries']))
+        print((len(myfile['value']['timeSeries'])))
 
         for i in range(0, len(myfile['value']['timeSeries'])):
             times = []

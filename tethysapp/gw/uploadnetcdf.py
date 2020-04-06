@@ -14,7 +14,11 @@ from rasterio.transform import from_bounds, from_origin
 from rasterio.warp import reproject, Resampling
 import rasterio
 import math
-import pygslib
+
+# TODO : PYGSLIB is a dependency that can only be installed in python 3.6
+# https://github.com/opengeostat/pygslib/wiki/Installing-pygslib-with-conda
+# Removing it for now just to see if we even need it.
+# import pygslib
 from scipy.optimize import least_squares
 from scipy.optimize import curve_fit
 from scipy.interpolate import UnivariateSpline
@@ -29,7 +33,7 @@ from .model import *
 
 #global variables
 # thredds_serverpath='/opt/tomcat/content/thredds/public/testdata/groundwater/'
-thredds_serverpath = app.get_custom_setting("thredds_path")
+# thredds_serverpath = app.get_custom_setting("thredds_path")
 # thredds_serverpath="/home/student/tds/apache-tomcat-8.5.30/content/thredds/public/testdata/groundwater/"
 
 # This function opens the Aquifers.csv file for the specified region and returns a JSON object listing the aquifers
@@ -262,6 +266,8 @@ def upload_netcdf(points, aq_name, app_workspace, aquifer_number, region, interp
         time_v = int(interval)
     resample_rate = str(time_v) + time_u
     existing_interp = False
+    thredds_serverpath = app.get_custom_setting("thredds_path")
+
     directory = os.path.join(thredds_serverpath, region)
     aquifer = aq_name.replace(" ", "_")
     list = []
@@ -371,7 +377,7 @@ def upload_netcdf(points, aq_name, app_workspace, aquifer_number, region, interp
                 if 'Short' in str(welli):
                     reflist = np.append(reflist, 'linear')
                     mydf = combined_df[[welli]].copy()
-                    print("Well ", welli)
+                    print(("Well ", welli))
                     corr_values = corr_df.nlargest(5, corr_df.columns[i]).values[:, i]
                     print(corr_values)
                     delete_list = []
@@ -419,7 +425,7 @@ def upload_netcdf(points, aq_name, app_workspace, aquifer_number, region, interp
                                 [interpolation_df, norm_exdf['prediction']], join="outer", axis=1)
                             interpolation_df = interpolation_df.rename(columns={"prediction": newname})
                         except:
-                            print("error for well ", welli, ". ")
+                            print(("error for well ", welli, ". "))
             print("Finished MLR temporal interpolation")
             newinterpolation_df = interpolation_df[str(start_date):str(
                 end_date)].resample(resample_rate, closed='left').nearest()
@@ -503,7 +509,7 @@ def upload_netcdf(points, aq_name, app_workspace, aquifer_number, region, interp
         values.append(myvalue[np.logical_not(x)])
         elevations.append(myelev[np.logical_not(x)])
         ids.append(myids)
-        print(len(mylon))
+        print((len(mylon)))
     lons = np.array(lons)
     lats = np.array(lats)
     values = np.array(values)
@@ -527,7 +533,7 @@ def upload_netcdf(points, aq_name, app_workspace, aquifer_number, region, interp
     variogram_function = spherical_variogram_model
     variogram_model_parameters = []
     for i in range(0, iterations):
-        print(len(coordinates[i]))
+        print((len(coordinates[i])))
         if len(coordinates[i]) > 2:
             X = coordinates[i]
             if interpolation_options == "depth":
@@ -665,13 +671,13 @@ def upload_netcdf(points, aq_name, app_workspace, aquifer_number, region, interp
                 elev_grid = np.reshape(elev_array, (lonrange, latrange))
                 idw_elev_grid = np.reshape(elev_idwarray, (lonrange, latrange))
                 x = np.isnan(elev_grid)
-                print(np.isnan(elev_grid).sum() / elev_grid.size * 100.0, " % idw in Elev Grid")
+                print((np.isnan(elev_grid).sum() / elev_grid.size * 100.0, " % idw in Elev Grid"))
                 elev_grid[x] = idw_elev_grid[x]
 
             depth_grid = np.reshape(array, (lonrange, latrange))
             idw_grid = np.reshape(idwarray, (lonrange, latrange))
             x = np.isnan(depth_grid)
-            print(np.isnan(depth_grid).sum() / depth_grid.size * 100.0, " % idw in Depth Grid")
+            print((np.isnan(depth_grid).sum() / depth_grid.size * 100.0, " % idw in Depth Grid"))
             depth_grid[x] = idw_grid[x]
 
             if interpolation_type == "Kriging with External Drift" or interpolation_options == "elev":
@@ -850,6 +856,8 @@ def upload_netcdf(points, aq_name, app_workspace, aquifer_number, region, interp
     myshell = 'aquifersubset.sh'
     directory = temp_dir
     shellscript = os.path.join(app_workspace.path, myshell)
+    thredds_serverpath = app.get_custom_setting("thredds_path")
+
     subprocess.call([shellscript, filename, directory, interpolation_type, region,
                      str(resolution), app_workspace.path, thredds_serverpath])
     return "Success. NetCDF File Created"

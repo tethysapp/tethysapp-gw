@@ -4,19 +4,19 @@ version: 1.0
 name: gw
 setup_path: setup_auto.py
 
-conda:
-  channels:
-    - opengeostat
-    - conda-forge
+requirements:
+  conda:
+    channels:
+      - conda-forge
 
-  dependencies:
-    - pykrige
-    - ujson
-    - numpy
-    - netCDF4
-    - cython
-    - pygslib
+    packages:
+      - shapely
+      - pykrige
+      - ujson
+      - numpy
+      - netCDF4
+      - cython
+      - rasterio
+      - elevation
+      - statsmodels
 
-pip:
-  - elevation
- 

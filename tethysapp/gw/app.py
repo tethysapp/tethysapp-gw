@@ -1,6 +1,7 @@
 from tethys_sdk.base import TethysAppBase, url_map_maker
 from tethys_sdk.app_settings import PersistentStoreDatabaseSetting, CustomSetting
 
+
 class Gw(TethysAppBase):
     """
     Tethys app class for Groundwater Level Mapping Tool.
@@ -18,9 +19,9 @@ class Gw(TethysAppBase):
     feedback_emails = []
 
     def persistent_store_settings(self):
-        #Define Persistent Store Settings.
+        # Define Persistent Store Settings.
 
-        ps_settings=(
+        ps_settings = (
             PersistentStoreDatabaseSetting(
                 name='primary_db',
                 description='primary database',
